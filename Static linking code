@@ -1,0 +1,98 @@
+//动态多态例子
+#include <stdio.h>
+#include <iostream>
+ 
+/**
+*Shape
+*/
+class CShape
+{
+public:
+CShape(){}
+virtual ~CShape(){}
+ 
+virtual void Draw() = 0;
+};
+ 
+/**
+*Point
+*/
+class CPoint : public CShape
+{
+public:
+CPoint(){}
+~CPoint(){}
+ 
+void Draw()
+{
+printf("Hello! I am Point!/n");
+}
+};
+ 
+/**
+*Line
+*/
+class CLine : public CShape
+{
+public:
+CLine(){}
+~CLine(){}
+ 
+void Draw()
+{
+printf("Hello! I am Line!/n");
+}
+};
+ 
+ 
+void main()
+{
+CShape* shape = new CPoint();
+//draw point
+shape->Draw();//在这里shape将会调用CPoint的Draw()函数
+delete shape;
+ 
+shape = new CLine();
+//draw Line
+shape->Draw();//而在这里shape将会调用CLIne 的Draw()函数
+delete shape;
+ 
+return ;
+}
+　　
+/*大家可以考虑一下它的输出结果，如果实在不知道，那就麻烦你运行一下它吧！
+由上面的例子，大家应该能理解什么是多态了：也就是一个Draw（） 可以有两种实现，并且是在运行时决定的，
+在编译阶段不知道，也不可能知道！只有在运行的时候才能知道我们生成的shape是那种图形，当然要实现这种效果就需要动态联编了，
+在基类我们会把想要多态的函数声明为虚函数，而虚函数的实现原理就使用了动态联编。如果你想了解的更透彻，那就上网查查资料吧！
+呵呵！在这里我就不再啰嗦虚函数的实现原理了。顺便在这里也提供一个静态多态的例子：
+在上面例子的基础之上添加模板函数*/
+
+template <class T>
+void DrawShape(T* t)
+{
+t->Draw();
+}
+ 
+修改main函数为如下：
+ 
+void main()
+{
+CShape* shape = new CPoint();
+//draw point
+shape->Draw();
+ 
+DrawShape<CPoint>((CPoint*)shape);
+delete shape;
+ 
+shape = new CLine();
+//draw Line
+shape->Draw();
+DrawShape<CLine>((CLine*)shape);
+delete shape;
+ 
+ 
+return ;
+}
+ 
+//在程序编译main函数的时候，编译器就已经指定了DrawShape函数里面的Draw要调用那个实现了，这就是静态多态，在编译时就已经知道了
+//要调用的函数。
